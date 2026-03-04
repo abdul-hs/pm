@@ -26,8 +26,8 @@ export const KanbanColumn = ({
     <section
       ref={setNodeRef}
       className={clsx(
-        "flex min-h-[520px] flex-col rounded-3xl border border-[var(--stroke)] bg-[var(--surface-strong)] p-4 shadow-[var(--shadow)] transition",
-        isOver && "ring-2 ring-[var(--accent-yellow)]"
+        "gradient-column flex min-h-[560px] flex-col rounded-[30px] border border-transparent p-5 shadow-[var(--shadow)] transition",
+        isOver && "border-[var(--stroke-strong)] ring-2 ring-[var(--accent-yellow)]"
       )}
       data-testid={`column-${column.id}`}
     >
@@ -35,19 +35,19 @@ export const KanbanColumn = ({
         <div className="w-full">
           <div className="flex items-center gap-3">
             <div className="h-2 w-10 rounded-full bg-[var(--accent-yellow)]" />
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gray-text)]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gray-text)]">
               {cards.length} cards
             </span>
           </div>
           <input
             value={column.title}
             onChange={(event) => onRename(column.id, event.target.value)}
-            className="mt-3 w-full bg-transparent font-display text-lg font-semibold text-[var(--navy-dark)] outline-none"
+            className="mt-3 w-full bg-transparent font-display text-[1.65rem] leading-[1.1] font-semibold text-[var(--navy-dark)] outline-none"
             aria-label="Column title"
           />
         </div>
       </div>
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+      <div className="mt-5 flex flex-1 flex-col gap-4">
         <SortableContext items={column.cardIds} strategy={verticalListSortingStrategy}>
           {cards.map((card) => (
             <KanbanCard
@@ -58,8 +58,13 @@ export const KanbanColumn = ({
           ))}
         </SortableContext>
         {cards.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-[var(--stroke)] px-3 py-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gray-text)]">
-            Drop a card here
+          <div className="gradient-soft flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--stroke)] px-4 py-7 text-center">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--gray-text)]">
+              Empty Stage
+            </span>
+            <span className="mt-2 text-sm leading-6 text-[var(--gray-text)]">
+              Drop a card here to keep work moving.
+            </span>
           </div>
         )}
       </div>

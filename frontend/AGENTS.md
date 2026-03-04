@@ -15,21 +15,36 @@ This document describes the current frontend implementation so future changes ar
 
 ## Current behavior
 
-- Single-page Kanban board rendered at `/`.
-- Five fixed columns are seeded from `src/lib/kanban.ts`.
+- Auth gate rendered at `/` using backend session checks.
+- On first visit, user must sign in with `user` / `password`.
+- After sign-in, the Kanban board is rendered.
+- User can log out and return to the sign-in screen.
+- Board data is loaded from backend `GET /api/kanban`.
+- Board edits are saved to backend `PUT /api/kanban` with optimistic versioning.
+- Board layout is readability-first:
+  - `<1280`: responsive stacked grid (1/2/3 columns by breakpoint)
+  - `1280-1599`: horizontal board row with readable fixed-width columns and scroll
+  - `>=1600`: full five-column desktop layout even when AI panel is open
+- AI assistant opens from floating action button as a floating panel (not a permanent docked rail).
+- AI chat messages are rendered in the panel with loading/error feedback.
+- AI responses apply authoritative board snapshots from backend.
 - User can:
   - rename column titles
   - add a card
   - delete a card
   - drag cards within and across columns
-- State is frontend-local only (not persisted yet).
+- On stale version conflicts (`409`), frontend reloads latest board snapshot.
+- Save failures show retry action without discarding local edits.
 
 ## Key file map
 
-- `src/app/page.tsx`: top-level page entry, renders `KanbanBoard`.
+- `src/app/page.tsx`: top-level page entry, renders `AuthKanbanApp`.
+- `src/components/AuthKanbanApp.tsx`: auth check + sign-in/logout flow + Kanban render gate.
 - `src/app/layout.tsx`: root layout and font setup.
-- `src/app/globals.css`: design tokens and global styles.
+- `src/app/globals.css`: design tokens (surfaces, shadows, column width, AI panel dimensions) and global styles.
 - `src/lib/kanban.ts`: core board types, initial data, `moveCard`, ID generation.
+- `src/lib/kanbanApi.ts`: board API client + conflict/unauthorized error mapping.
+- `src/components/AiSidebar.tsx`: AI chat sidebar UI and message form.
 - `src/components/KanbanBoard.tsx`: main state container and DnD wiring.
 - `src/components/KanbanColumn.tsx`: column shell and card list.
 - `src/components/KanbanCard.tsx`: sortable card UI.
@@ -39,7 +54,11 @@ This document describes the current frontend implementation so future changes ar
 ## Testing map
 
 - Unit tests:
+  - `src/components/AuthKanbanApp.test.tsx`
+  - `src/app/page.test.tsx`
   - `src/lib/kanban.test.ts`
+  - `src/components/KanbanCardPreview.test.tsx`
+  - `src/components/AiSidebar.test.tsx`
   - `src/components/KanbanBoard.test.tsx`
 - E2E tests:
   - `tests/kanban.spec.ts`
@@ -66,6 +85,6 @@ Run from `frontend/`:
 
 ## Known limitations (current state)
 
-- No authentication UI.
-- No backend data persistence.
-- No AI chat sidebar yet.
+- Auth is MVP-only fixed credentials, not real identity provider.
+- No explicit offline queue/reconnect strategy beyond manual retry.
+- AI chat history is not loaded from backend on initial page load (history starts when user chats in current UI session).

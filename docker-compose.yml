@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm-app
+    ports:
+      - "8000:8000"
+    environment:
+      PM_DB_PATH: /data/pm.sqlite3
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+    volumes:
+      - pm_data:/data
+
+volumes:
+  pm_data:

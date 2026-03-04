@@ -1,0 +1,16 @@
+.git
+.gitignore
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+backend/.venv/
+backend/.mypy_cache/
+backend/.ruff_cache/
+
+frontend/node_modules/
+frontend/.next/
+frontend/test-results/
